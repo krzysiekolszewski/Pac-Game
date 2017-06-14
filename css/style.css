@@ -5,6 +5,7 @@
 body {
     margin: 0;
     padding: 0;
+    background-color: lightgrey
 }
 
 section#score {
@@ -18,7 +19,6 @@ section#score {
 }
 
 #board  > div {
-  /*border: 1px solid black;*/
   float: left;
   width: 64px;
   height: 64px;
@@ -64,12 +64,12 @@ section#score div {
 
 
 
-.furry {
+.pac {
   background-image: url('../images/pacman.png');
   background-repeat: no-repeat;
   background-size: cover;
 }
-.coin {
+.point {
   background-image: url('../images/straw.png');
   background-repeat: no-repeat;
   background-size: cover;

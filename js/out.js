@@ -71,77 +71,81 @@
 /***/ (function(module, exports) {
 
 document.addEventListener("DOMContentLoaded", function() {
-
-    function Furry() {
+    //Create Pac in (0,0) position
+    function Pac() {
         this.x = 0;
         this.y = 0;
         this.direction = 'right'
     }
-
-    function Coin() {
+    //point coordinate
+    function Point() {
         this.x = Math.floor(Math.random() * 10);
         this.y = Math.floor(Math.random() * 10);
     }
-
+    // bonus coordinate
+    function Bonus() {
+        this.x = Math.floor(Math.random() * 10);
+        this.y = Math.floor(Math.random() * 10);
+    }
+    //create function that starts the game
     function Game() {
         this.board = document.querySelectorAll('#board > div');
-        this.furry = new Furry();
-        this.coin = new Coin();
+        this.pac = new Pac();
+        this.point = new Point();
+        this.bonus = new Bonus();
         this.score = 0;
-        this.time = 250;
-
+        this.time = 200;
         this.index = function(x, y) {
             return x + (y * 10);
         }
 
-        this.showFurry = function() {
-            this.board[this.index(this.furry.x, this.furry.y)].classList.add('furry');
+        this.showPac = function() {
+            this.board[this.index(this.pac.x, this.pac.y)].classList.add('pac');
 
-            if (this.furry.direction === "right") {
-            } else if (this.furry.direction === "left") {
-                this.board[this.index(this.furry.x, this.furry.y)].classList.add('left');
-            } else if (this.furry.direction === "bottom") {
-                this.board[this.index(this.furry.x, this.furry.y)].classList.add('bottom');
-            } else if (this.furry.direction === "top") {
-                this.board[this.index(this.furry.x, this.furry.y)].classList.add('top');
+            if (this.pac.direction === "right") {
+            } else if (this.pac.direction === "left") {
+                this.board[this.index(this.pac.x, this.pac.y)].classList.add('left');
+            } else if (this.pac.direction === "bottom") {
+                this.board[this.index(this.pac.x, this.pac.y)].classList.add('bottom');
+            } else if (this.pac.direction === "top") {
+                this.board[this.index(this.pac.x, this.pac.y)].classList.add('top');
             }
-
-
-            this.checkCoinCollision();
+            this.checkBonusCollision();
+            this.checkPointCollision();
         }
 
-        this.showCoin = function() {
-            this.board[this.index(this.coin.x, this.coin.y)].classList.add('coin');
+        this.showPoint = function() {
+            this.board[this.index(this.point.x, this.point.y)].classList.add('point');
         }
+
         var self = this;
         this.startGame = function() {
             return this.idSetInterval = setInterval(function() {
-                self.moveFurry();
+                self.movePac();
             }, this.time);
         }
-
-        this.moveFurry = function() {
-
-            this.hideVisibleFurry();
+        this.showBonus =  function() {
+            return this.setTimer = setInterval(function() {
+                self.board[self.index(self.bonus.x, self.bonus.y)].classList.add('bonus');
+            }, Math.floor(Math.random() * 20000)+10000);
+        }
+        this.movePac = function() {
+            this.hideVisiblePac();
             this.hideDirection();
-
-            if (this.furry.direction === "right") {
-                this.furry.x = this.furry.x + 1;
-            } else if (this.furry.direction === "left") {
-                this.furry.x = this.furry.x - 1;
-            } else if (this.furry.direction === "bottom") {
-                this.furry.y = this.furry.y + 1;
-            } else if (this.furry.direction === "top") {
-                this.furry.y = this.furry.y - 1;
+            if (this.pac.direction === "right") {
+                this.pac.x = this.pac.x + 1;
+            } else if (this.pac.direction === "left") {
+                this.pac.x = this.pac.x - 1;
+            } else if (this.pac.direction === "bottom") {
+                this.pac.y = this.pac.y + 1;
+            } else if (this.pac.direction === "top") {
+                this.pac.y = this.pac.y - 1;
             }
-
             this.gameOver();
         }
-
-        this.hideVisibleFurry = function() {
-            document.querySelector('.furry').classList.remove('furry');
+        this.hideVisiblePac = function() {
+            document.querySelector('.pac').classList.remove('pac');
         }
-
         this.hideDirection = function() {
             if (document.querySelector('.bottom')) {
                 document.querySelector('.bottom').classList.remove('bottom');
@@ -151,62 +155,58 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.querySelector('.left').classList.remove('left');
             }
         }
-
-        this.turnFurry = function(event) {
+        this.turnPac = function(event) {
             switch (event.which) {
                 case 37:
-                    this.furry.direction = 'left';
+                    this.pac.direction = 'left';
                     break;
                 case 39:
-                    this.furry.direction = 'right';
+                    this.pac.direction = 'right';
                     break;
                 case 38:
-                    this.furry.direction = 'top';
+                    this.pac.direction = 'top';
                     break;
                 case 40:
-                    this.furry.direction = 'bottom';
-
+                    this.pac.direction = 'bottom';
             }
         }
-
-
-        this.checkCoinCollision = function() {
-            if (this.furry.x === this.coin.x && this.furry.y === this.coin.y) {
-                document.querySelector('.coin').classList.remove('coin');
+        this.checkPointCollision = function() {
+            if (this.pac.x === this.point.x && this.pac.y === this.point.y) {
+                document.querySelector('.point').classList.remove('point');
                 this.score = this.score + 1;
-                this.coin = new Coin();
-                this.showCoin();
+                this.point = new Point();
+                this.showPoint();
                 document.querySelector('#score > div > strong').innerText = this.score;
             }
         }
-
-
-
+        this.checkBonusCollision = function() {
+            if (this.pac.x === this.bonus.x && this.pac.y === this.bonus.y) {
+                document.querySelector('.bonus').classList.remove('bonus');
+                this.score = this.score + 3;
+                this.bonus = new Bonus();
+                this.showBonus();
+                document.querySelector('#score > div > strong').innerText = this.score;
+            }
+        }
         this.gameOver = function() {
-            if (this.furry.x < 0 || this.furry.x > 9 || this.furry.y < 0 || this.furry.y > 9) {
+            if (this.pac.x < 0 || this.pac.x > 9 || this.pac.y < 0 || this.pac.y > 9) {
                 clearInterval(this.idSetInterval);
                 document.querySelector("#board").innerText = ("GAME OVER");
                 document.querySelector("#board").style.fontSize = ("40px");
                 document.querySelector("#board").style.textAlign = ("center");
             } else {
-                this.showFurry();
+                this.showPac();
             }
         }
-
     }
-
-
     var game = new Game();
     game.startGame();
-    game.showFurry();
-    game.showCoin();
+    game.showPac();
+    game.showPoint();
+    game.showBonus();
     document.addEventListener('keydown', function(event) {
-        game.turnFurry(event);
+        game.turnPac(event);
     });
-
-
-
-
 });
 
 
